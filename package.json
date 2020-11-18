@@ -19,7 +19,7 @@
     ]
   },
   "dependencies": {
-    "@emotion/hash": "^0.7.0",
+    "@emotion/hash": "^0.8.0",
     "array-unique": "^0.3.2",
     "chunk": "^0.0.2",
     "debounce": "^1.2.0",
