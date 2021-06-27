@@ -2,6 +2,7 @@ const fetch = require('lets-fetch')
 const nullCache = require('./cache/null')
 const endpoints = require('./endpoints')
 const flow = require('./flow')
+const AutoBatchNode = require('./autoBatchNode')
 
 module.exports = class Client {
   constructor () {
@@ -12,6 +13,7 @@ module.exports = class Client {
     this.caches = [nullCache()]
     this.debug = false
     this.client = this
+    this.autoBatchPool = new AutoBatchNode(this, this)
   }
 
   // Set the schema version
@@ -77,6 +79,11 @@ module.exports = class Client {
       return flow.parallel(flushPromises)
         .then(() => buildEndpoint._cacheSetSingle('cacheBuildId', resp.buildId))
     })
+  }
+
+  // Maintains a pool of static endpoints with auto-batching enabled
+  autoBatch() {
+    return this.autoBatchPool
   }
 
   // All the different API endpoints

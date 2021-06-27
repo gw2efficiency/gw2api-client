@@ -1,8 +1,20 @@
 /* eslint-env jest */
 const nullCache = require('../src/cache/null')
 const memoryCache = require('../src/cache/memory')
+const AutoBatchNode = require('../src/autoBatchNode')
 const Module = require('../src/client')
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+// async function expectError (callback) {
+//   let err
+//   try {
+//     await callback()
+//   } catch (e) {
+//     err = e
+//   }
+
+//   expect(err).toBeInstanceOf(Error)
+// }
 
 describe('client', () => {
   let client
@@ -121,6 +133,22 @@ describe('client', () => {
     await wait(50)
 
     client.build = tmp
+  })
+
+  describe('autobatch', () => {
+
+    it(`can get the autoBatchNode wrapped Client`, () => {
+      expect(client.autoBatch()).toBeInstanceOf(AutoBatchNode)
+      expect(client.autoBatch()).toBeInstanceOf(AutoBatchNode)
+      expect(client.autoBatch().parent).toBeInstanceOf(Module)
+      expect(client.autoBatch().parent === client).toEqual(true)
+    })
+
+    it('can get an autobatching endpoint', () => {
+      let endpoint = client.autoBatch().items().parent
+      expect(endpoint.url).toEqual('/v2/items')
+      expect(endpoint._autoBatch).not.toBeNull()
+    })
   })
 
   it('can get the account endpoint', () => {
